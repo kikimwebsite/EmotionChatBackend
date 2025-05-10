@@ -1,0 +1,41 @@
+
+.env*
+
+# Virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs and debug files
+*.log
+
+
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Coverage and testing
+.coverage
+pytest_cache/
+htmlcov/
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Temporary files created during development
+*.bak
+*.tmp
+*.swp
+
+# Azure or deployment-specific files (if applicable)
+*.azure/
