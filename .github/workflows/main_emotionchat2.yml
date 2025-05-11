@@ -29,8 +29,6 @@ jobs:
           source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install fastapi
-          pip install uvicorn
         # Exclude virtual environment from deployment artifact
         env:
           PIP_CACHE_DIR: .pip_cache
