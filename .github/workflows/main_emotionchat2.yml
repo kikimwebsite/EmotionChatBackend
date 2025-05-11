@@ -35,9 +35,7 @@ jobs:
 
       # Step 4: List installed dependencies (for debugging)
       - name: List installed dependencies
-        run: |
-          source venv/bin/activate
-          pip list
+        run: pip list
 
       # Step 5: Prepare deployment package
       - name: Create deployment package
