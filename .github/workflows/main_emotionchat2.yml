@@ -1,3 +1,5 @@
+# Updated workflow to include venv in deployment
+
 name: Build and deploy Python app to Azure Web App - emotionchat2
 
 on:
@@ -10,40 +12,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Required for actions/checkout
+      contents: read #This is required for actions/checkout
 
     steps:
-      # Step 1: Checkout repository
       - uses: actions/checkout@v4
 
-      # Step 2: Set up Python version
-      - name: Set up Python 3.9
+      - name: Set up Python version
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
-      # Step 3: Install dependencies in a clean virtual environment
-      - name: Install dependencies
+      - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        # Exclude virtual environment from deployment artifact
-        env:
-          PIP_CACHE_DIR: .pip_cache
 
-      # Step 4: List installed dependencies (for debugging)
-      - name: List installed dependencies
-        run: pip list
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      # Step 5: Prepare deployment package
-      - name: Create deployment package
-        run: |
-          zip -r release.zip . -x ".git/*" "venv/*" "*.pytest_cache/*" ".pip_cache/*" "*.github/*"
+      - name: Zip artifact for deployment (include venv)
+        run: zip release.zip ./* -r
 
-      # Step 6: Upload artifact for deployment
-      - name: Upload deployment artifact
+      - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -56,21 +47,18 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # Required for requesting the JWT
-      contents: read # Required for actions/checkout
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
-      # Step 1: Download artifact from build job
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
 
-      # Step 2: Unzip artifact
-      - name: Unzip artifact
+      - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      # Step 3: Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -78,7 +66,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4046C49CF62C42BBB437FE1663FD5941 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AA68078924D44405BA62A0B3AF803302 }}
 
-      # Step 4: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
