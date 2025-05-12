@@ -28,12 +28,8 @@ jobs:
           python -m venv antenv
           source antenv/bin/activate
           python -m pip install --upgrade pip
-
-      # Step 4: Install dependencies
-        run: |
-          source antenv/bin/activate
           pip install -r requirements.txt
-
+          
       # Step 5: Zip the application for deployment
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
